@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Trash2, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import CreateAlertDialog from '@/components/CreateAlertDialog';
 
 const Alerts = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,6 +20,8 @@ const Alerts = () => {
   // Dialog state
   const [editOpen, setEditOpen] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<any>(null);
+  // Create alert dialog state
+  const [createOpen, setCreateOpen] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
@@ -53,6 +56,14 @@ const Alerts = () => {
           if (user?.id) dispatch(getUserAlerts(user.id));
         }}
       />
+      {/* Create Alert Dialog */}
+      <CreateAlertDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onSuccess={() => {
+          if (user?.id) dispatch(getUserAlerts(user.id));
+        }}
+      />
       <div className="container mx-auto px-4 pt-20 pb-8">
         <div className="mb-8 flex justify-between items-center">
           <div>
@@ -61,7 +72,7 @@ const Alerts = () => {
               Manage your car search alerts and get notified when matching cars are listed.
             </p>
           </div>
-          <Button>
+          <Button onClick={() => setCreateOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Create Alert
           </Button>
@@ -77,7 +88,7 @@ const Alerts = () => {
               <p className="text-muted-foreground mb-4">
                 Create your first alert to get notified when cars matching your criteria are listed.
               </p>
-              <Button>
+              <Button onClick={() => setCreateOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Create Your First Alert
               </Button>

@@ -11,8 +11,57 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useEffect } from 'react';
 
 const CreateAnnonce = () => {
+  // Liste des villes marocaines
+  const villesMaroc = [
+    "Casablanca", "Rabat", "Fès", "Marrakech", "Agadir", "Tanger", "Meknès", "Oujda", "Kenitra", "Tetouan", "Safi", "El Jadida", "Beni Mellal", "Nador", "Khouribga", "Khemisset", "Taza", "Settat", "Berrechid", "Ouarzazate", "Larache", "Guelmim", "Mohammedia", "Errachidia", "Sidi Kacem", "Sidi Slimane", "Sidi Bennour", "Taourirt", "Essaouira", "Azrou", "Ifrane", "Al Hoceima", "Dakhla", "Laayoune"
+  ];
+  // State pour marques et modèles
+  const [marques, setMarques] = useState<string[]>([]);
+  const [models, setModels] = useState<string[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
+  // Chargement des marques au montage
+  useEffect(() => {
+      fetch("http://localhost:3001/api/makes")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.Makes) {
+          const makes = data.Makes.map((m: any) => m.make_display).filter(Boolean);
+          setMarques(makes.sort((a: string, b: string) => a.localeCompare(b)));
+        } else {
+          setMarques([]);
+        }
+      })
+      .catch(err => {
+        console.error('Erreur chargement marques:', err);
+        setMarques([]);
+      });
+  }, []);
+  // Chargement des modèles à chaque changement de marque
+  useEffect(() => {
+    if (!selectedBrand) {
+      setModels([]);
+      setSelectedModel('');
+      return;
+    }
+    fetch(`http://localhost:3001/api/models/${selectedBrand}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.Results) {
+          const modelsList = data.Results.map((m: any) => m.Model_Name).filter(Boolean);
+          setModels(modelsList.sort((a: string, b: string) => a.localeCompare(b)));
+        } else {
+          setModels([]);
+        }
+      })
+      .catch(err => {
+        console.error('Erreur chargement modèles:', err);
+        setModels([]);
+      });
+  }, [selectedBrand]);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { isLoading } = useSelector((state: RootState) => state.annonces);
@@ -146,40 +195,65 @@ const CreateAnnonce = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="brand">Brand *</Label>
-                    <Input
+                    <select
                       id="brand"
                       name="brand"
-                      value={annonce.brand}
-                      onChange={handleChange}
+                      value={selectedBrand}
+                      onChange={e => {
+                        setSelectedBrand(e.target.value);
+                        setAnnonce(prev => ({ ...prev, brand: e.target.value, model: '' }));
+                      }}
                       required
-                    />
+                      className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
+                    >
+                      <option value="">Select brand</option>
+                      {marques.length === 0 ? (
+                        <option value="">Aucune donnée</option>
+                      ) : marques.map((m) => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
                   </div>
-                  
                   <div>
                     <Label htmlFor="model">Model *</Label>
-                    <Input
+                    <select
                       id="model"
                       name="model"
-                      value={annonce.model}
-                      onChange={handleChange}
+                      value={selectedModel}
+                      onChange={e => {
+                        setSelectedModel(e.target.value);
+                        setAnnonce(prev => ({ ...prev, model: e.target.value }));
+                      }}
                       required
-                    />
+                      className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
+                      disabled={!selectedBrand}
+                    >
+                      <option value="">Select model</option>
+                      {models.length === 0 ? (
+                        <option value="">Aucune donnée</option>
+                      ) : models.map((m) => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="year">Year *</Label>
-                    <Input
+                    <select
                       id="year"
                       name="year"
-                      type="number"
-                      min="1990"
-                      max={new Date().getFullYear()}
                       value={annonce.year}
-                      onChange={handleChange}
+                      onChange={e => handleSelectChange('year', e.target.value)}
                       required
-                    />
+                      className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
+                    >
+                      <option value="">Select year</option>
+                      {Array.from({length: new Date().getFullYear() - 1990 + 1}, (_, i) => 1990 + i).reverse().map(y => (
+                        <option key={y} value={y}>{y}</option>
+                      ))}
+                    </select>
                   </div>
                   
                   <div>
@@ -213,13 +287,19 @@ const CreateAnnonce = () => {
                   
                   <div>
                     <Label htmlFor="location">Location *</Label>
-                    <Input
+                    <select
                       id="location"
                       name="location"
                       value={annonce.location}
-                      onChange={handleChange}
+                      onChange={e => handleSelectChange('location', e.target.value)}
                       required
-                    />
+                      className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
+                    >
+                      <option value="">Select city</option>
+                      {villesMaroc.map((v) => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 

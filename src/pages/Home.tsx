@@ -10,10 +10,15 @@ import Navbar from '@/components/Navbar';
 const PAGE_SIZE = 6;
 
 export default function Home() {
-  const dispatch = useDispatch<AppDispatch>();
-  const { annonces, isLoading, error, currentPage } = useSelector((state: RootState) => state.annonces);
-
-  // Filtering state
+  // Liste des villes marocaines
+  const villesMaroc = [
+    "Casablanca", "Rabat", "Fès", "Marrakech", "Agadir", "Tanger", "Meknès", "Oujda", "Kenitra", "Tetouan", "Safi", "El Jadida", "Beni Mellal", "Nador", "Khouribga", "Khemisset", "Taza", "Settat", "Berrechid", "Ouarzazate", "Larache", "Guelmim", "Mohammedia", "Errachidia", "Sidi Kacem", "Sidi Slimane", "Sidi Bennour", "Taourirt", "Essaouira", "Azrou", "Ifrane", "Al Hoceima", "Dakhla", "Laayoune"
+  ];
+  // State pour marques et modèles
+  const [marques, setMarques] = useState<string[]>([]);
+  const [models, setModels] = useState<string[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState('');
+    // Filtering state
   const [filters, setFilters] = useState({
     marque: '',
     modele: '',
@@ -26,12 +31,68 @@ export default function Home() {
     carburant: '',
     transmission: '',
   });
+  // Chargement des marques au montage
+  useEffect(() => {
+    fetch("http://localhost:3001/api/makes")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.Makes) {
+          const makes = data.Makes.map((m: any) => m.make_display).filter(Boolean);
+          setMarques(makes.sort((a: string, b: string) => a.localeCompare(b)));
+        } else {
+          setMarques([]);
+        }
+      })
+      .catch(err => {
+        console.error('Erreur chargement marques:', err);
+        setMarques([]);
+      });
+  }, []);
+  // Chargement des modèles à chaque changement de marque
+  useEffect(() => {
+    if (!filters?.marque) {
+      setModels([]);
+      return;
+    }
+    fetch(`http://localhost:3001/api/models/${filters.marque}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.Results) {
+          const modelsList = data.Results.map((m: any) => m.Model_Name).filter(Boolean);
+          setModels(modelsList.sort((a: string, b: string) => a.localeCompare(b)));
+        } else {
+          setModels([]);
+        }
+      })
+      .catch(err => {
+        console.error('Erreur chargement modèles:', err);
+        setModels([]);
+      });
+  }, [filters?.marque]);
+  const dispatch = useDispatch<AppDispatch>();
+  const { annonces, isLoading, error, currentPage } = useSelector((state: RootState) => state.annonces);
+
+
   // Filtre panel visibility
   const [showFilters, setShowFilters] = useState(true);
 
   // Helper to get unique values for select options
+  // Helper to get unique values for select options (only for existing annonces)
   const getUniqueValues = (key: string) => {
-    return Array.from(new Set(annonces.map((a: any) => a[key]).filter(Boolean)));
+    // On filtre d'abord les annonces selon les autres filtres sauf la clé courante
+    const filtered = annonces.filter((annonce: any) => {
+      return Object.entries(filters).every(([k, v]) => {
+        if (k === key) return true; // ignore current key
+        if (!v) return true;
+        if (k === 'annee') return String(annonce[k]) === v;
+        if (k === 'prixMin') return annonce.prix >= Number(v);
+        if (k === 'prixMax') return annonce.prix <= Number(v);
+        if (k === 'kilometrageMin') return annonce.kilometrage >= Number(v);
+        if (k === 'kilometrageMax') return annonce.kilometrage <= Number(v);
+        return annonce[k] === v;
+      });
+    });
+    return Array.from(new Set(filtered.map((a: any) => a[key]).filter(Boolean)));
   };
 
   // Filtering logic
@@ -76,61 +137,66 @@ export default function Home() {
         <div className="sticky top-16 z-30 mb-4 bg-card/80 dark:bg-card/60 backdrop-blur-md rounded-xl p-1 border border-border shadow-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
             {/* Marque */}
-            <div className="flex items-center gap-2">
-              <Car className="h-4 w-4 text-primary" />
-              <select
-                className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
-                value={filters.marque}
-                onChange={e => setFilters(f => ({ ...f, marque: e.target.value }))}
-              >
-                <option value="">Marque</option>
-                {getUniqueValues('marque').map((v) => (
-                  <option key={v} value={v}>{v}</option>
-                ))}
-              </select>
-            </div>
+          <div className="flex items-center gap-2">
+            <Car className="h-4 w-4 text-primary" />
+            <select
+              className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
+              value={filters.marque}
+              onChange={e => setFilters(f => ({ ...f, marque: e.target.value, modele: '' }))}
+            >
+              <option value="">Marque</option>
+              {marques.length === 0 ? (
+                <option value="">Aucune donnée</option>
+              ) : marques.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+          </div>
             {/* Modele */}
-            <div className="flex items-center gap-2">
-              <Car className="h-4 w-4 text-primary" />
-              <select
-                className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
-                value={filters.modele}
-                onChange={e => setFilters(f => ({ ...f, modele: e.target.value }))}
-              >
-                <option value="">Modèle</option>
-                {getUniqueValues('modele').map((v) => (
-                  <option key={v} value={v}>{v}</option>
-                ))}
-              </select>
-            </div>
+          <div className="flex items-center gap-2">
+            <Car className="h-4 w-4 text-primary" />
+            <select
+              className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
+              value={filters.modele}
+              onChange={e => setFilters(f => ({ ...f, modele: e.target.value }))}
+              disabled={!filters.marque}
+            >
+              <option value="">Modèle</option>
+              {models.length === 0 ? (
+                <option value="">Aucune donnée</option>
+              ) : models.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+          </div>
             {/* Année */}
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-primary" />
-              <select
-                className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
-                value={filters.annee}
-                onChange={e => setFilters(f => ({ ...f, annee: e.target.value }))}
-              >
-                <option value="">Année</option>
-                {getUniqueValues('annee').map((v) => (
-                  <option key={v} value={v}>{v}</option>
-                ))}
-              </select>
-            </div>
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-primary" />
+            <select
+              className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
+              value={filters.annee}
+              onChange={e => setFilters(f => ({ ...f, annee: e.target.value }))}
+            >
+              <option value="">Année</option>
+              {Array.from({length: new Date().getFullYear() - 1990 + 1}, (_, i) => 1990 + i).reverse().map(y => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          </div>
             {/* Localisation */}
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-primary" />
-              <select
-                className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
-                value={filters.localisation}
-                onChange={e => setFilters(f => ({ ...f, localisation: e.target.value }))}
-              >
-                <option value="">Localisation</option>
-                {getUniqueValues('localisation').map((v) => (
-                  <option key={v} value={v}>{v}</option>
-                ))}
-              </select>
-            </div>
+          <div className="flex items-center gap-2">
+            <MapPin className="h-4 w-4 text-primary" />
+            <select
+              className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
+              value={filters.localisation}
+              onChange={e => setFilters(f => ({ ...f, localisation: e.target.value }))}
+            >
+              <option value="">Localisation</option>
+              {villesMaroc.map((v) => (
+                <option key={v} value={v}>{v}</option>
+              ))}
+            </select>
+          </div>
             {/* Prix min */}
             <div className="flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-primary" />

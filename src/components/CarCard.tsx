@@ -117,6 +117,35 @@ const CarCard = ({ annonce }: CarCardProps) => {
                 {annonce.brand} {annonce.model} - {annonce.year}
               </DialogDescription>
             </DialogHeader>
+            {/* Images carousel in modal */}
+            {annonce.images && annonce.images.length > 0 && (
+              <div className="aspect-video bg-gradient-to-br from-muted to-muted/50 relative overflow-hidden flex items-center justify-center mb-4">
+                <img
+                  src={"http://localhost:8082" + annonce.images[imgIndex]}
+                  alt={`${annonce.brand} ${annonce.model}`}
+                  className="object-cover w-full h-full"
+                  loading="lazy"
+                />
+                {annonce.images.length > 1 && (
+                  <>
+                    <button
+                      aria-label="Previous image"
+                      onClick={prevImage}
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-1 hover:bg-opacity-70 transition"
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button
+                      aria-label="Next image"
+                      onClick={nextImage}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-1 hover:bg-opacity-70 transition"
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
             {annonce.description && (
               <div className="bg-muted rounded-lg p-4 text-base text-foreground shadow-inner border mt-4 whitespace-pre-line">
                 {annonce.description}
