@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Car Marketplace Design System - Dark theme with green accents */
+
+@layer base {
+  :root {
+    --background: 220 23% 6%;
+    --foreground: 210 40% 98%;
+    /* ...dark theme variables... */
+    --card: 220 20% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 220 20% 8%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 220 23% 6%;
+    --primary-glow: 160 84% 55%;
+    --secondary: 220 15% 12%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 220 15% 12%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 160 84% 39%;
+    --accent-foreground: 220 23% 6%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 15% 15%;
+    --input: 220 15% 15%;
+    --ring: 160 84% 39%;
+    --radius: 0.75rem;
+    --nav-bg: 220 23% 6% / 0.95;
+    --hero-gradient-start: 220 23% 6%;
+    --hero-gradient-end: 220 20% 8%;
+    --card-hover: 220 15% 10%;
+    --success: 160 84% 39%;
+    --warning: 43 96% 56%;
+    --info: 200 98% 39%;
+    --shadow-elegant: 0 20px 25px -5px hsl(220 23% 6% / 0.3);
+    --shadow-glow: 0 0 40px hsl(160 84% 39% / 0.2);
+    --shadow-card: 0 4px 6px -1px hsl(220 23% 6% / 0.1);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 220 23% 6%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 23% 6%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 23% 6%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 160 84% 55%;
+    --secondary: 220 15% 95%;
+    --secondary-foreground: 220 23% 6%;
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 23% 40%;
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 160 84% 39%;
+    --radius: 0.75rem;
+    --nav-bg: 0 0% 100% / 0.95;
+    --hero-gradient-start: 0 0% 100%;
+    --hero-gradient-end: 220 15% 95%;
+    --card-hover: 220 15% 98%;
+    --success: 160 84% 39%;
+    --warning: 43 96% 56%;
+    --info: 200 98% 39%;
+    --shadow-elegant: 0 20px 25px -5px hsl(0 0% 100% / 0.1);
+    --shadow-glow: 0 0 40px hsl(160 84% 39% / 0.1);
+    --shadow-card: 0 4px 6px -1px hsl(0 0% 100% / 0.05);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
