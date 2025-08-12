@@ -155,19 +155,27 @@ export default function Home() {
             {/* Modele */}
           <div className="flex items-center gap-2">
             <Car className="h-4 w-4 text-primary" />
-            <select
-              className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
-              value={filters.modele}
-              onChange={e => setFilters(f => ({ ...f, modele: e.target.value }))}
-              disabled={!filters.marque}
-            >
-              <option value="">Modèle</option>
-              {models.length === 0 ? (
-                <option value="">Aucune donnée</option>
-              ) : models.map((m) => (
-                <option key={m} value={m}>{m}</option>
-              ))}
-            </select>
+            {models.length === 0 ? (
+              <input
+                type="text"
+                className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
+                placeholder="Saisir un modèle"
+                value={filters.modele}
+                onChange={e => setFilters(f => ({ ...f, modele: e.target.value }))}
+              />
+            ) : (
+              <select
+                className="flex-1 bg-background dark:bg-background border border-border text-foreground rounded-md h-8 px-2 text-sm"
+                value={filters.modele}
+                onChange={e => setFilters(f => ({ ...f, modele: e.target.value }))}
+                disabled={!filters.marque}
+              >
+                <option value="">Modèle</option>
+                {models.map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            )}
           </div>
             {/* Année */}
           <div className="flex items-center gap-2">
