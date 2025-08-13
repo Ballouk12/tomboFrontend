@@ -67,7 +67,7 @@ const EditAnnonce = () => {
         title: "Success!",
         description: "Your car listing has been updated.",
       });
-      navigate('/dashboard');
+      navigate('/my-annonces');
     } catch (error) {
       toast({
         title: "Error",
@@ -250,7 +250,7 @@ const EditAnnonce = () => {
                   <Button type="submit" disabled={isLoading} className="flex-1">
                     {isLoading ? 'Updating...' : 'Update Listing'}
                   </Button>
-                  <Button type="button" variant="outline" onClick={() => navigate('/dashboard')}>
+                  <Button type="button" variant="outline" onClick={() => navigate('/my-annonces')}>
                     Cancel
                   </Button>
                 </div>

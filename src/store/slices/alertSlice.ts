@@ -18,7 +18,7 @@ export interface Alert {
   has_defects: boolean;
   active: boolean;
   created_at: Date;
-  userId?: number;
+  user?: { id: number };
 }
 
 export interface AlertState {
@@ -39,8 +39,10 @@ export const createAlert = createAsyncThunk(
   async (alertData: Omit<Alert, 'id' | 'created_at'>, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/alert/create`, alertData);
+      console.log('[createAlert] Response:', response.data);
       return response.data;
     } catch (error: any) {
+      console.error('[createAlert] Error:', error);
       return rejectWithValue(error.response?.data || 'Failed to create alert');
     }
   }

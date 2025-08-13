@@ -1,14 +1,18 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store/store';
-import { getUserAnnonces } from '@/store/slices/annonceSlice';
+import { getUserAnnonces, deleteAnnonce } from '@/store/slices/annonceSlice';
 import Navbar from '@/components/Navbar';
 import CarCard from '@/components/CarCard';
+import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function MyAnnonces() {
   const dispatch = useDispatch<AppDispatch>();
   const { userAnnonces, isLoading, error } = useSelector((state: RootState) => state.annonces);
   const { user } = useSelector((state: RootState) => state.auth);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user?.id) {
@@ -26,6 +30,26 @@ export default function MyAnnonces() {
     }
   }, [dispatch, user?.id]);
 
+  const handleEditAnnonce = (id: number) => {
+    navigate(`/edit-annonce/${id}`);
+  };
+
+  const handleDeleteAnnonce = async (id: number) => {
+    try {
+      await dispatch(deleteAnnonce(id)).unwrap();
+      toast({
+        title: "Annonce supprimée",
+        description: "Votre annonce a été supprimée avec succès.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: error as string,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -40,7 +64,12 @@ export default function MyAnnonces() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {userAnnonces.map((annonce: any) => (
-              <CarCard key={annonce.id} annonce={annonce} />
+              <CarCard
+                key={annonce.id}
+                annonce={annonce}
+                onEdit={handleEditAnnonce}
+                onDelete={handleDeleteAnnonce}
+              />
             ))}
           </div>
         )}

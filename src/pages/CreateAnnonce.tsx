@@ -78,6 +78,7 @@ const CreateAnnonce = () => {
     mileage: '',
     transmission: '',
     description: '',
+    user: { id: user?.id } // Initialisé à 0, sera mis à jour lors de la soumission
   });
   const formData = new FormData();
 
@@ -216,25 +217,39 @@ const CreateAnnonce = () => {
                   </div>
                   <div>
                     <Label htmlFor="model">Model *</Label>
-                    <select
-                      id="model"
-                      name="model"
-                      value={selectedModel}
-                      onChange={e => {
-                        setSelectedModel(e.target.value);
-                        setAnnonce(prev => ({ ...prev, model: e.target.value }));
-                      }}
-                      required
-                      className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
-                      disabled={!selectedBrand}
-                    >
-                      <option value="">Select model</option>
-                      {models.length === 0 ? (
-                        <option value="">Aucune donnée</option>
-                      ) : models.map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
+                    {models.length === 0 ? (
+                      <input
+                        type="text"
+                        id="model"
+                        name="model"
+                        value={selectedModel}
+                        onChange={e => {
+                          setSelectedModel(e.target.value);
+                          setAnnonce(prev => ({ ...prev, model: e.target.value }));
+                        }}
+                        required
+                        className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
+                        placeholder="Enter model"
+                      />
+                    ) : (
+                      <select
+                        id="model"
+                        name="model"
+                        value={selectedModel}
+                        onChange={e => {
+                          setSelectedModel(e.target.value);
+                          setAnnonce(prev => ({ ...prev, model: e.target.value }));
+                        }}
+                        required
+                        className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
+                        disabled={!selectedBrand}
+                      >
+                        <option value="">Select model</option>
+                        {models.map((m) => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                    )}
                   </div>
                 </div>
 

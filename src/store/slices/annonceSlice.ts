@@ -143,6 +143,18 @@ export const deleteAnnonce = createAsyncThunk(
   }
 );
 
+export const getAnnonceById = createAsyncThunk(
+  'annonces/getById',
+  async (id: number, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/annonce/${id}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to fetch the listing');
+    }
+  }
+);
+
 const annonceSlice = createSlice({
   name: 'annonces',
   initialState,

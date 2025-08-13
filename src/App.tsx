@@ -64,7 +64,7 @@ const App = () => (
               } 
             />
             <Route 
-              path="/annonce/edit/:id" 
+              path="/edit-annonce/:id" 
               element={
                 <ProtectedRoute>
                   <EditAnnonce />
