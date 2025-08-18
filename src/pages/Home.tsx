@@ -6,7 +6,6 @@ import { Car, MapPin, Calendar, DollarSign, Gauge, Palette, Fuel, Settings } fro
 import CarCard from '@/components/CarCard';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
-
 const PAGE_SIZE = 6;
 
 export default function Home() {
@@ -124,13 +123,11 @@ export default function Home() {
       <Navbar />
       <h2 className="text-3xl font-bold mb-6 text-center">All Cars</h2>
       {/* Filtrer toggle button */}
-      <div className="flex justify-end mb-2">
-        <button
-          className="bg-primary hover:bg-primary/80 text-white rounded-md h-8 px-4 text-sm shadow"
-          onClick={() => setShowFilters(v => !v)}
-        >
-          {showFilters ? 'Cacher le filtrage' : 'Filtrer'}
-        </button>
+      <div className="flex mb-4 ">
+          <Button onClick={() => setShowFilters(v => !v)} className="flex items-center gap-2">
+            {showFilters ? 'Cacher' : 'Filtrer'}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg>
+          </Button>
       </div>
       {/* Filtering UI */}
       {showFilters && (
@@ -284,12 +281,13 @@ export default function Home() {
             {/* Reset button */}
             <div className="col-span-full mt-1 flex justify-end">
               <button
-                className="bg-red-500 hover:bg-red-600 text-white rounded-md h-8 px-3 text-sm"
+                className="flex bg-red-500 hover:bg-red-600 text-white rounded-md h-8 px-3 text-sm gap-2 items-center"
                 onClick={() => setFilters({
                   marque: '', modele: '', annee: '', prixMin: '', prixMax: '', kilometrageMin: '', kilometrageMax: '', localisation: '', carburant: '', transmission: ''
                 })}
               >
-                Réinitialiser les filtres
+                Réinitialiser
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw-icon lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
               </button>
             </div>
           </div>

@@ -196,79 +196,67 @@ const CreateAnnonce = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="brand">Brand *</Label>
-                    <select
-                      id="brand"
-                      name="brand"
-                      value={selectedBrand}
-                      onChange={e => {
-                        setSelectedBrand(e.target.value);
-                        setAnnonce(prev => ({ ...prev, brand: e.target.value, model: '' }));
-                      }}
-                      required
-                      className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
-                    >
-                      <option value="">Select brand</option>
-                      {marques.length === 0 ? (
-                        <option value="">Aucune donnée</option>
-                      ) : marques.map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
+                    <Select value = {selectedBrand} onValueChange={(value) =>{
+                      setSelectedBrand(value);
+                      setAnnonce(prev => ({ ...prev, brand: value, model: '' }));
+                    }}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select brand" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {marques.map((m) => (
+                          <SelectItem key={m} value={m}>{m}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
                   </div>
                   <div>
                     <Label htmlFor="model">Model *</Label>
                     {models.length === 0 ? (
-                      <input
-                        type="text"
+                      <Input
                         id="model"
                         name="model"
+                        type="text"
                         value={selectedModel}
                         onChange={e => {
                           setSelectedModel(e.target.value);
                           setAnnonce(prev => ({ ...prev, model: e.target.value }));
                         }}
-                        required
-                        className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
-                        placeholder="Enter model"
                       />
                     ) : (
-                      <select
-                        id="model"
-                        name="model"
-                        value={selectedModel}
-                        onChange={e => {
-                          setSelectedModel(e.target.value);
-                          setAnnonce(prev => ({ ...prev, model: e.target.value }));
-                        }}
-                        required
-                        className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
-                        disabled={!selectedBrand}
-                      >
-                        <option value="">Select model</option>
-                        {models.map((m) => (
-                          <option key={m} value={m}>{m}</option>
-                        ))}
-                      </select>
+                      <Select value={selectedModel} onValueChange={(value) => {
+                        setSelectedModel(value);
+                        setAnnonce(prev => ({ ...prev, model: value }));
+                      }}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select model" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {models.map((m) => (
+                            <SelectItem key={m} value={m}>{m}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="year">Year *</Label>
-                    <select
-                      id="year"
-                      name="year"
-                      value={annonce.year}
-                      onChange={e => handleSelectChange('year', e.target.value)}
-                      required
-                      className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
-                    >
-                      <option value="">Select year</option>
+                 
+
+                  <Label>Year *</Label>
+                  <Select value = {annonce.year} onValueChange={(value) => handleSelectChange('year', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select year" />
+                    </SelectTrigger>
+                    <SelectContent>
                       {Array.from({length: new Date().getFullYear() - 1990 + 1}, (_, i) => 1990 + i).reverse().map(y => (
-                        <option key={y} value={y}>{y}</option>
+                        <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
                       ))}
-                    </select>
+                    </SelectContent>
+                  </Select>
                   </div>
                   
                   <div>
@@ -302,19 +290,17 @@ const CreateAnnonce = () => {
                   
                   <div>
                     <Label htmlFor="location">Location *</Label>
-                    <select
-                      id="location"
-                      name="location"
-                      value={annonce.location}
-                      onChange={e => handleSelectChange('location', e.target.value)}
-                      required
-                      className="w-full border rounded-md px-2 py-2 bg-background text-foreground"
-                    >
-                      <option value="">Select city</option>
-                      {villesMaroc.map((v) => (
-                        <option key={v} value={v}>{v}</option>
-                      ))}
-                    </select>
+                  
+                    <Select value={annonce.location} onValueChange={(value) => handleSelectChange('location', value)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Location" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {villesMaroc.map((v) => (
+                          <SelectItem key={v} value={v}>{v}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
@@ -360,15 +346,12 @@ const CreateAnnonce = () => {
                     placeholder="Describe your car's condition, features, and any additional information..."
                   />
                 </div>
-                <div>
-                  <Label htmlFor="images">Upload Images</Label>
-                  <Input
-                    id="images"
-                    name="images"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => {
+                 <div className="grid w-full max-w-sm items-center gap-3">
+                  <Label htmlFor="picture">Pictures</Label>
+                  <Input id="picture" type="file" 
+                   accept="image/*"
+                   multiple
+                   onChange={(e) => {
                       if (e.target.files) {
                         setFiles(Array.from(e.target.files));
                       }

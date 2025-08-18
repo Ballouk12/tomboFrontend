@@ -6,9 +6,8 @@ const API_BASE_URL = '';
 export interface Notification {
   id: number;
   message: string;
+  state: 'UNREAD' | 'READ';
   date: Date;
-  alertId?: number;
-  annonceId?: number;
 }
 
 export interface NotificationState {
@@ -74,7 +73,7 @@ const notificationSlice = createSlice({
       .addCase(getUserNotifications.fulfilled, (state, action) => {
         state.isLoading = false;
         state.notifications = action.payload;
-        state.unreadCount = action.payload.length;
+        state.unreadCount = action.payload.filter((n: Notification) => n.state === 'UNREAD').length;
       })
       .addCase(getUserNotifications.rejected, (state, action) => {
         state.isLoading = false;
